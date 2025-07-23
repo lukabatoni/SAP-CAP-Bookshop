@@ -15,11 +15,12 @@ import cds.gen.catalogservice.CatalogService_;
 public class CatalogServiceHandler implements EventHandler {
 
   private static final String DISCOUNT_MESSAGE = " -- 11% discount!";
+  private static final int DISCOUNT_THRESHOLD = 20;
 
   @After(event = CqnService.EVENT_READ, entity = Books_.CDS_NAME)
   public void addDiscountIfApplicable(List<Books> books) {
     for (Books book : books) {
-      if (book.getStock() != null && book.getStock() > 20) {
+      if (book.getStock() != null && book.getStock() > DISCOUNT_THRESHOLD) {
         book.setTitle(book.getTitle() + DISCOUNT_MESSAGE);
       }
     }
