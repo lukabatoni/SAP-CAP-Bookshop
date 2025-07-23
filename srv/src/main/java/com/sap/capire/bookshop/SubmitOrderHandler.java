@@ -18,6 +18,8 @@ public class SubmitOrderHandler implements EventHandler {
 
   private final PersistenceService persistenceService;
 
+  private static final String EXCEEDS_STOCK_MESSAGE = " exceeds stock for book #";
+
   public SubmitOrderHandler(PersistenceService persistenceService) {
     this.persistenceService = persistenceService;
   }
@@ -27,7 +29,7 @@ public class SubmitOrderHandler implements EventHandler {
     Select<Books_> byId = Select.from(cds.gen.catalogservice.Books_.class).byId(context.getBook());
     Books book = persistenceService.run(byId).single().as(Books.class);
     if (context.getQuantity() > book.getStock())
-      throw new IllegalArgumentException(context.getQuantity() + " exceeds stock for book #" + book.getTitle());
+      throw new IllegalArgumentException(context.getQuantity() + EXCEEDS_STOCK_MESSAGE + book.getTitle());
     book.setStock(book.getStock() - context.getQuantity());
     persistenceService.run(Update.entity(Books_.CDS_NAME).data(book));
     context.setCompleted();
